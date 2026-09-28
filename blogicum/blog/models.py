@@ -37,7 +37,7 @@ class Location(PublishedModel):
 
     def __str__(self):
         return textwrap.shorten(
-            self.title,
+            self.name,
             width=MAX_STR,
             placeholder='...'
         )
@@ -109,7 +109,6 @@ class Post(PublishedModel):
     class Meta:
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
-        default_related_name = 'Post'
 
     def __str__(self):
         return textwrap.shorten(
