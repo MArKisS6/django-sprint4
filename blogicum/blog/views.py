@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import ListView
 from django.utils import timezone
 
 from blog.models import Category, Post
 
-MAX_POST = 5
+POSTS_PER_PAGE = 10
 
 
 def get_base_queryset():
@@ -17,9 +18,13 @@ def get_base_queryset():
     )
 
 
-def index(request):
-    post_list = get_base_queryset().order_by('-pub_date')[:MAX_POST]
-    return render(request, 'blog/index.html', {'post_list': post_list})
+class IndexListView(ListView):
+    model = Post
+    template_name = 'blog/index.html'
+    paginate_by = POSTS_PER_PAGE
+
+    def get_queryset(self):
+        return get_base_queryset().order_by('-pub_date')
 
 
 def post_detail(request, post_id):
