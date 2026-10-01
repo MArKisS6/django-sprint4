@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.utils import timezone
 
 from blog.models import Category, Post
