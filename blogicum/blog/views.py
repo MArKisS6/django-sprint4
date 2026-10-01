@@ -27,12 +27,18 @@ class IndexListView(ListView):
         return get_base_queryset().order_by('-pub_date')
 
 
-def post_detail(request, post_id):
-    post = get_object_or_404(
-        get_base_queryset(),
-        id=post_id
-    )
-    return render(request, 'blog/detail.html', {'post': post})
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/detail.html'
+
+    def get_queryset(self):
+        return get_base_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        context['comments'] = self.object.comments.all()
+        return context
 
 
 def category_posts(request, category_slug):
