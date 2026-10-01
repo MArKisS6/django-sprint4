@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 MAX_LEN_TITLE = 256
-MAX_STR = 10
+MAX_STR = 50
 
 
 class PublishedModel(models.Model):
