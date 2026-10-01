@@ -3,6 +3,8 @@ from django.views.generic import ListView, DetailView
 from django.utils import timezone
 
 from blog.models import Category, Post
+from .forms import CommentForm
+
 
 POSTS_PER_PAGE = 10
 
