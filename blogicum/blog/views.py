@@ -35,11 +35,11 @@ class OnlyAuthorMixin(UserPassesTestMixin):
 
     def test_func(self):
         obj = self.get_object()
+        self._object = obj
         return obj.author == self.request.user
 
     def handle_no_permission(self):
-        obj = self.get_object()
-        return redirect('blog:post_detail', post_id=obj.pk)
+        return redirect('blog:post_detail', post_id=self._object.pk)
 
 
 class IndexListView(ListView):
