@@ -8,6 +8,8 @@ User = get_user_model()
 
 
 class PostForm(forms.ModelForm):
+    """Форма создания и редактирования публикации."""
+
     pub_date = forms.DateTimeField(
         widget=forms.DateTimeInput(
             attrs={'type': 'datetime-local'},
@@ -19,10 +21,14 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ('author', 'is_published',)
+        fields = (
+            'title', 'text', 'pub_date',
+            'location', 'category', 'image',
+        )
 
 
 class CommentForm(forms.ModelForm):
+    """Форма добавления и редактирования комментария."""
 
     class Meta:
         model = Comment
@@ -30,12 +36,20 @@ class CommentForm(forms.ModelForm):
 
 
 class CustomUserCreationForm(UserCreationForm):
+    """Форма регистрации с расширенным набором полей."""
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = (
+            'username', 'first_name', 'last_name', 'email',
+        )
 
 
 class ProfileEditForm(forms.ModelForm):
+    """Форма редактирования профиля пользователя."""
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = (
+            'username', 'first_name', 'last_name', 'email',
+        )

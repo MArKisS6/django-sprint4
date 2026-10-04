@@ -72,6 +72,14 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
 
     def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Post.objects.filter(
+                author=self.request.user
+            ).select_related(
+                'author', 'location', 'category'
+            ).annotate(
+                comment_count=Count('comments')
+            )
         return get_base_queryset()
 
     def get_context_data(self, **kwargs):
