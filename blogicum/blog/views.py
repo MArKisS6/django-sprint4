@@ -6,19 +6,26 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView, DeleteView, DetailView, ListView, UpdateView
+)
 
 from .forms import CommentForm, PostForm, ProfileEditForm
-from .models import Category, Post
+from .models import Category, Comment, Post
 
 User = get_user_model()
-
 
 POSTS_PER_PAGE = 10
 
 
 def get_base_queryset():
-    """Возвращает базовый QuerySet с аннотацией количества комментариев."""
+    """Возвращает базовый QuerySet опубликованных постов.
+
+    Отбирает посты с датой публикации не позже текущего момента,
+    у которых и пост, и его категория опубликованы. Подгружает
+    связанные объекты автора, локации и категории, а также
+    аннотирует количество комментариев.
+    """
     return Post.objects.filter(
         is_published=True,
         pub_date__lte=timezone.now(),
@@ -31,18 +38,24 @@ def get_base_queryset():
 
 
 class OnlyAuthorMixin(UserPassesTestMixin):
-    """Пускает только автора объекта. Остальных — редиректит на detail."""
+    """Миксин: доступ только автору объекта.
+
+    Если текущий пользователь не является автором,
+    выполняется редирект на страницу просмотра объекта.
+    """
 
     def test_func(self):
         obj = self.get_object()
-        self._object = obj
         return obj.author == self.request.user
 
     def handle_no_permission(self):
-        return redirect('blog:post_detail', post_id=self._object.pk)
+        obj = self.get_object()
+        return redirect('blog:post_detail', post_id=obj.pk)
 
 
 class IndexListView(ListView):
+    """Главная страница: лента последних публикаций."""
+
     model = Post
     template_name = 'blog/index.html'
     paginate_by = POSTS_PER_PAGE
@@ -52,6 +65,8 @@ class IndexListView(ListView):
 
 
 class PostDetailView(DetailView):
+    """Страница отдельной публикации с комментариями."""
+
     model = Post
     template_name = 'blog/detail.html'
 
@@ -68,6 +83,8 @@ class PostDetailView(DetailView):
 
 
 class CategoryPostListView(ListView):
+    """Страница публикаций в выбранной категории."""
+
     model = Post
     template_name = 'blog/category.html'
     paginate_by = POSTS_PER_PAGE
@@ -89,6 +106,8 @@ class CategoryPostListView(ListView):
 
 
 class ProfileListView(ListView):
+    """Страница профиля пользователя с его публикациями."""
+
     model = Post
     template_name = 'blog/profile.html'
     paginate_by = POSTS_PER_PAGE
@@ -117,6 +136,8 @@ class ProfileListView(ListView):
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Страница редактирования собственного профиля."""
+
     model = User
     form_class = ProfileEditForm
     template_name = 'blog/user.html'
@@ -132,6 +153,8 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
+    """Страница создания новой публикации."""
+
     model = Post
     form_class = PostForm
     template_name = 'blog/create.html'
@@ -148,6 +171,8 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 class PostUpdateView(OnlyAuthorMixin, UpdateView):
+    """Страница редактирования публикации (только автор)."""
+
     model = Post
     form_class = PostForm
     template_name = 'blog/create.html'
@@ -157,4 +182,67 @@ class PostUpdateView(OnlyAuthorMixin, UpdateView):
         return reverse(
             'blog:post_detail',
             kwargs={'post_id': self.object.pk}
+        )
+
+
+class PostDeleteView(OnlyAuthorMixin, DeleteView):
+    """Страница удаления публикации (только автор)."""
+
+    model = Post
+    template_name = 'blog/create.html'
+    pk_url_kwarg = 'post_id'
+
+    def get_success_url(self):
+        return reverse(
+            'blog:profile',
+            kwargs={'username': self.request.user.username}
+        )
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    """Добавление комментария к публикации."""
+
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post = get_object_or_404(
+            Post, pk=self.kwargs['post_id']
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            'blog:post_detail',
+            kwargs={'post_id': self.kwargs['post_id']}
+        )
+
+
+class CommentUpdateView(OnlyAuthorMixin, UpdateView):
+    """Редактирование комментария (только автор)."""
+
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment.html'
+    pk_url_kwarg = 'comment_id'
+
+    def get_success_url(self):
+        return reverse(
+            'blog:post_detail',
+            kwargs={'post_id': self.kwargs['post_id']}
+        )
+
+
+class CommentDeleteView(OnlyAuthorMixin, DeleteView):
+    """Удаление комментария (только автор)."""
+
+    model = Comment
+    template_name = 'blog/comment.html'
+    pk_url_kwarg = 'comment_id'
+
+    def get_success_url(self):
+        return reverse(
+            'blog:post_detail',
+            kwargs={'post_id': self.kwargs['post_id']}
         )

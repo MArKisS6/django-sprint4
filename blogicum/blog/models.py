@@ -1,6 +1,7 @@
 import textwrap
-from django.db import models
+
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
 
@@ -26,6 +27,8 @@ class PublishedModel(models.Model):
 
 
 class Location(PublishedModel):
+    """Географическая метка публикации."""
+
     name = models.CharField(
         max_length=MAX_LEN_TITLE,
         verbose_name='Название места'
@@ -44,6 +47,8 @@ class Location(PublishedModel):
 
 
 class Category(PublishedModel):
+    """Тематическая категория публикации."""
+
     title = models.CharField(
         max_length=MAX_LEN_TITLE,
         verbose_name='Заголовок'
@@ -73,6 +78,8 @@ class Category(PublishedModel):
 
 
 class Post(PublishedModel):
+    """Публикация пользователя."""
+
     title = models.CharField(
         max_length=MAX_LEN_TITLE,
         verbose_name='Заголовок'
@@ -105,7 +112,6 @@ class Post(PublishedModel):
         null=True,
         verbose_name='Категория'
     )
-
     image = models.ImageField(
         'Изображение',
         upload_to='posts_images',
@@ -125,6 +131,8 @@ class Post(PublishedModel):
 
 
 class Comment(models.Model):
+    """Комментарий к публикации."""
+
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,

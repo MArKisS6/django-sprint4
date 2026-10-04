@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from .models import Category, Location, Post
+from .models import Category, Comment, Location, Post
 
 admin.site.empty_value_display = 'Не задано'
 
 
 class PostAdmin(admin.ModelAdmin):
+    """Настройки отображения публикаций в админке."""
+
     list_display = (
         'title',
         'pub_date',
@@ -26,6 +28,8 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    """Настройки отображения категорий в админке."""
+
     list_display = (
         'title',
         'slug',
@@ -40,6 +44,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
+    """Настройки отображения локаций в админке."""
+
     list_display = (
         'name',
         'is_published',
@@ -48,6 +54,20 @@ class LocationAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('name',)
     list_filter = ('is_published',)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    """Настройки отображения комментариев в админке."""
+
+    list_display = (
+        'text',
+        'post',
+        'author',
+        'created_at'
+    )
+    search_fields = ('text', 'author__username')
+    list_filter = ('created_at',)
 
 
 admin.site.register(Post, PostAdmin)
