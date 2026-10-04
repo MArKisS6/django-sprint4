@@ -12,7 +12,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bootstrap5',
-    'core.apps.CoreConfig',
     'pages.apps.PagesConfig',
     'blog.apps.BlogConfig',
 ]

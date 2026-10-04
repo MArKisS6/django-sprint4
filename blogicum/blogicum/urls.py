@@ -7,8 +7,8 @@ from django.urls import reverse_lazy
 
 from blog.forms import CustomUserCreationForm
 
-handler404 = 'core.views.page_not_found'
-handler500 = 'core.views.custom_500'
+handler404 = 'pages.views.page_not_found'
+handler500 = 'pages.views.custom_500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
