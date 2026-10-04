@@ -69,6 +69,7 @@ class PostDetailView(DetailView):
 
     model = Post
     template_name = 'blog/detail.html'
+    pk_url_kwarg = 'post_id'
 
     def get_queryset(self):
         return get_base_queryset()
