@@ -114,3 +114,5 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'blog:index'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+POSTS_PER_PAGE = 10

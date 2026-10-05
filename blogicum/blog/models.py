@@ -97,7 +97,6 @@ class Post(PublishedModel):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='comments'
         verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
@@ -111,6 +110,7 @@ class Post(PublishedModel):
         Category,
         on_delete=models.SET_NULL,
         null=True,
+        related_name='posts',
         verbose_name='Категория'
     )
     image = models.ImageField(
@@ -143,6 +143,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='comments',
         verbose_name='Автор комментария'
     )
     text = models.TextField('Текст комментария')
