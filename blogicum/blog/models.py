@@ -97,6 +97,7 @@ class Post(PublishedModel):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='comments'
         verbose_name='Автор публикации'
     )
     location = models.ForeignKey(
