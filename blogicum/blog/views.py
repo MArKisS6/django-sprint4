@@ -16,6 +16,14 @@ from .utils import get_posts
 User = get_user_model()
 
 
+class CommentEditMixin:
+    """Миксин: общие атрибуты для редактирования/удаления комментария."""
+
+    model = Comment
+    template_name = 'blog/comment.html'
+    pk_url_kwarg = 'comment_id'
+
+
 class OnlyAuthorMixin(UserPassesTestMixin):
     """Миксин: доступ только автору объекта.
 
@@ -227,13 +235,10 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         )
 
 
-class CommentUpdateView(OnlyAuthorMixin, UpdateView):
+class CommentUpdateView(OnlyAuthorMixin, CommentEditMixin, UpdateView):
     """Редактирование комментария (только автор)."""
 
-    model = Comment
     form_class = CommentForm
-    template_name = 'blog/comment.html'
-    pk_url_kwarg = 'comment_id'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
@@ -249,12 +254,8 @@ class CommentUpdateView(OnlyAuthorMixin, UpdateView):
         )
 
 
-class CommentDeleteView(OnlyAuthorMixin, DeleteView):
+class CommentDeleteView(OnlyAuthorMixin, CommentEditMixin, DeleteView):
     """Удаление комментария (только автор)."""
-
-    model = Comment
-    template_name = 'blog/comment.html'
-    pk_url_kwarg = 'comment_id'
 
     def get_object(self, queryset=None):
         return get_object_or_404(
