@@ -38,15 +38,12 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = get_object_or_404(
-            get_posts(with_comments=True),
+            get_posts(),
             pk=self.kwargs['post_id']
         )
         if post.author != self.request.user:
             post = get_object_or_404(
-                get_posts(
-                    published_only=True,
-                    with_comments=True
-                ),
+                get_posts(published_only=True),
                 pk=self.kwargs['post_id']
             )
         return post
@@ -102,14 +99,9 @@ class ProfileListView(ListView):
 
     def get_queryset(self):
         profile = self.get_profile()
-        if self.request.user == profile:
-            return get_posts(
-                manager=profile.post_set,
-                with_comments=True
-            )
         return get_posts(
             manager=profile.post_set,
-            published_only=True,
+            published_only=self.request.user != profile,
             with_comments=True
         )
 
