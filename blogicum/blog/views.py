@@ -16,32 +16,6 @@ from .utils import get_posts
 User = get_user_model()
 
 
-class CommentEditMixin:
-    """Миксин: общие атрибуты для редактирования/удаления комментария."""
-
-    model = Comment
-    template_name = 'blog/comment.html'
-    pk_url_kwarg = 'comment_id'
-
-
-class OnlyAuthorMixin(UserPassesTestMixin):
-    """Миксин: доступ только автору объекта.
-
-    Если текущий пользователь не является автором,
-    выполняется редирект на страницу просмотра объекта.
-    """
-
-    def test_func(self):
-        obj = self.get_object()
-        return obj.author == self.request.user
-
-    def handle_no_permission(self):
-        return redirect(
-            'blog:post_detail',
-            post_id=self.kwargs['post_id']
-        )
-
-
 class IndexListView(ListView):
     """Главная страница: лента последних публикаций."""
 
