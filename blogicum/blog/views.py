@@ -1,15 +1,14 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin, UserPassesTestMixin
-)
-from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView
 )
 
 from .forms import CommentForm, PostForm, ProfileEditForm
+from .mixins import CommentEditMixin, OnlyAuthorMixin
 from .models import Category, Comment, Post
 from .utils import get_posts
 
