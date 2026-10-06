@@ -269,3 +269,4 @@ class CommentDeleteView(OnlyAuthorMixin, CommentEditMixin, DeleteView):
             'blog:post_detail',
             kwargs={'post_id': self.kwargs['post_id']}
         )
+
