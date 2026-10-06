@@ -24,7 +24,8 @@ class OnlyAuthorMixin(UserPassesTestMixin):
 
 class CommentEditMixin:
     """Миксин: общие атрибуты для редактирования и удаления
-    комментария."""
+    комментария.
+    """
 
     model = Comment
     template_name = 'blog/comment.html'
