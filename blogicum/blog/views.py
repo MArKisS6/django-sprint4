@@ -10,7 +10,7 @@ from django.views.generic import (
 from .forms import CommentForm, PostForm, ProfileEditForm
 from .mixins import CommentEditMixin, OnlyAuthorMixin
 from .models import Category, Comment, Post
-from .utils import get_posts
+from .query_utils import get_posts
 
 User = get_user_model()
 
@@ -205,32 +205,8 @@ class CommentUpdateView(OnlyAuthorMixin, CommentEditMixin, UpdateView):
 
     form_class = CommentForm
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Comment,
-            pk=self.kwargs['comment_id'],
-            post_id=self.kwargs['post_id']
-        )
-
-    def get_success_url(self):
-        return reverse(
-            'blog:post_detail',
-            kwargs={'post_id': self.kwargs['post_id']}
-        )
-
 
 class CommentDeleteView(OnlyAuthorMixin, CommentEditMixin, DeleteView):
     """Удаление комментария (только автор)."""
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Comment,
-            pk=self.kwargs['comment_id'],
-            post_id=self.kwargs['post_id']
-        )
-
-    def get_success_url(self):
-        return reverse(
-            'blog:post_detail',
-            kwargs={'post_id': self.kwargs['post_id']}
-        )
+    pass
